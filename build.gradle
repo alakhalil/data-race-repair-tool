@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'org.example'
+group 'de.uni_passau.data_race_repair'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -10,6 +10,8 @@ repositories {
 }
 
 dependencies {
+    implementation "fr.inria.gforge.spoon:spoon-core:10.1.1"
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
