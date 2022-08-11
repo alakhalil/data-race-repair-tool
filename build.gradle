@@ -4,7 +4,7 @@ plugins {
 
 }
 
-mainClassName = 'de.uni_passau.data_race_repair.CommandLine'
+mainClassName = 'de.uni_passau.data_race_repair.Main'
 
 group 'de.uni_passau.data_race_repair'
 version '1.0-SNAPSHOT'
