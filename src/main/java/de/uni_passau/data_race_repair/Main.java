@@ -35,13 +35,8 @@ public class Main {
 	public static void main(final String[] args) throws IOException, URISyntaxException {
 		if (args.length > 0) {
 			final var sourceDir = args[0];
-			final var outputDir = args[1];
+			//final var outputDir = args[1];
 
-			addAnnotations(
-				sourceDir,
-				"temp/annotated/",
-				"com.facebook.infer.annotation.ThreadSafe"
-			);
 
 			// TODO: remaining processing + remove 'temp' dir
 
