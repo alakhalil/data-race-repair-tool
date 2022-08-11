@@ -34,7 +34,7 @@ public class FaultDetector {
             for (File program : directories) {
                 System.out.println("Currently processing program:" + program.getName());
 
-                String libDir = "./lib/*" ;
+                String libDir = "./home/alaa/Desktop/lib/infer-annotation-0.18.0.jar" ;
                 String outputDir =   "./out";
                 String classpath =  "./" + entryPoints.get(program.getName()) + ".java";
                 String srcPath =  "./" ;
