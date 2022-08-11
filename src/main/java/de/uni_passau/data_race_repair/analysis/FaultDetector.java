@@ -1,4 +1,4 @@
-package de.uni_passau.data_race_repair;
+package de.uni_passau.data_race_repair.analysis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -11,7 +11,6 @@ public class FaultDetector {
 
     private final String sourceFilesPath;
     private File[] directories;
-    private final List<List<BugDetail>> bugDetails = new ArrayList<>();
 
     public FaultDetector(String sourceFilesPath) {
         this.sourceFilesPath = sourceFilesPath;
@@ -52,14 +51,18 @@ public class FaultDetector {
      * read reported bugs in json files into list of list bugDetail
      * @return
      */
-    public List<List<BugDetail>> readReports() {
+    public Map<File, List<BugDetail>> readReports() {
         try {
-            ObjectMapper mapper = new ObjectMapper();
+        	final var bugDetails = new HashMap<File, List<BugDetail>>();
+
+        	final ObjectMapper mapper = new ObjectMapper();
             for (File program : this.directories) {
                 String reportPath = sourceFilesPath + "/" + program.getName() + "/infer-out/report.json";
-                if (Paths.get(reportPath).toFile().isFile())
-                    bugDetails.add(Arrays.asList(mapper.readValue(Paths.get(reportPath).toFile(), BugDetail[].class)));
+                if (Paths.get(reportPath).toFile().isFile()) {
+	                bugDetails.put(program, Arrays.asList(mapper.readValue(Paths.get(reportPath).toFile(), BugDetail[].class)));
+                }
             }
+
             return bugDetails;
 
         } catch (Exception ex) {

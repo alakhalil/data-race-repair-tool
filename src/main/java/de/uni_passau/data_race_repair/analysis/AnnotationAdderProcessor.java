@@ -1,4 +1,4 @@
-package de.uni_passau.data_race_repair;
+package de.uni_passau.data_race_repair.analysis;
 
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.declaration.CtAnnotation;
