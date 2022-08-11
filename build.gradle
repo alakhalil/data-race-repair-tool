@@ -1,8 +1,12 @@
 plugins {
     id 'java'
+    id 'application'
+
 }
 
-group 'org.example'
+mainClassName = 'de.uni_passau.data_race_repair.CommandLine'
+
+group 'de.uni_passau.data_race_repair'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -12,8 +16,5 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-}
-
-test {
-    useJUnitPlatform()
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.0'
 }
