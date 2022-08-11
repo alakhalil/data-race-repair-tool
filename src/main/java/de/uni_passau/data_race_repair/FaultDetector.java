@@ -33,13 +33,15 @@ public class FaultDetector {
 
             for (File program : directories) {
                 System.out.println("Currently processing program:" + program.getName());
-                String outputDir = sourceFilesPath + "/" + program.getName() + "/out";
+
                 File file = new File("resources/lib/*");
                 String libDir = file.getAbsolutePath();
+                String outputDir = sourceFilesPath + "/" + program.getName() + "/out";
                 String classpath = sourceFilesPath + "/" + program.getName() + "/" + entryPoints.get(program.getName()) + ".java";
                 String srcPath = sourceFilesPath + "/" + program.getName();
 
-                String cmd = "infer --racerd-only -- javac -d  " + outputDir + " -cp " + libDir + " -sourcepath  " + srcPath + " " + classpath;
+                String cmd = "infer --racerd-only -o " +  outputDir + " -- javac -d  " + outputDir + " -cp " + libDir + " -sourcepath  " + srcPath + " " + classpath;
+                System.out.println(cmd);
                 Process process = Runtime.getRuntime().exec(cmd, null, null);
                 printResults(process);
             }
