@@ -1,6 +1,8 @@
 FROM ubuntu:latest
 
 RUN apt-get -y update
+RUN apt-get install -y git
+RUN git clone https://github.com/alakhalil/data-race-repair-tool.git
 
 #install gradle
 RUN apt-get install -y wget
