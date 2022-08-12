@@ -4,6 +4,8 @@ import de.uni_passau.data_race_repair.access.Snapshot;
 import de.uni_passau.data_race_repair.analysis.AnnotationAdderProcessor;
 import de.uni_passau.data_race_repair.analysis.BugDetail;
 import de.uni_passau.data_race_repair.analysis.FaultDetector;
+import de.uni_passau.data_race_repair.fix.Fix;
+import de.uni_passau.data_race_repair.fix.FixGenerationProcessor;
 import spoon.Launcher;
 
 import java.io.File;
@@ -62,13 +64,40 @@ public class Main {
 	}
 
 
-	private static void fixBugs(final Map<File, Set<Snapshot>> bugsByFile, String outputDir) {
+	private static void repairClassFile(
+		final Map<File, Set<Fix>> fixesByFile,
+		final String analyzedSourcesDir,
+		final String outputDir
+	) {
+		final var launcher = new Launcher();
+		launcher.addInputResource(analyzedSourcesDir);
+		launcher.setSourceOutputDirectory(outputDir);
+		launcher.addProcessor(new FixGenerationProcessor(fixesByFile));
+
+		launcher.run();
+	}
+
+
+	private static void fixBugs(
+		final Map<File, Set<Snapshot>> bugsByFile,
+		final String analyzedSourcesDir,
+		final String outputDir
+	) {
+		final var fixesByFile = new HashMap<File, Set<Fix>>();
+
 		for (final var file : bugsByFile.keySet()) {
 			final var bugs = bugsByFile.get(file);
-			bugs.forEach(bug -> {
-				System.out.println(file.getAbsolutePath() + ": " + bug);
-			});
+			
+			final Map<String, List<Snapshot>> bugsBy = bugs
+				.stream()
+				.collect(Collectors.groupingBy(bug -> bug.accessPath));
+
+			final Set<Fix> fixes = null; //TODO: IMPLEMENT ALGORITHM
+
+			fixesByFile.put(file, fixes);
 		}
+
+		repairClassFile(fixesByFile, analyzedSourcesDir, outputDir);
 	}
 
 
@@ -101,7 +130,7 @@ public class Main {
 
 			final var bugsByFile = findBugsByFile(ANNOTATED_SOURCES_DIR);
 
-			fixBugs(bugsByFile, outputDir);
+			fixBugs(bugsByFile, ANNOTATED_SOURCES_DIR, outputDir);
 
 			deleteRecursively(TEMP_DIR);
 		} else {
