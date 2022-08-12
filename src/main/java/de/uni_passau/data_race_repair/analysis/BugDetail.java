@@ -1,11 +1,14 @@
-package de.uni_passau.data_race_repair;
+package de.uni_passau.data_race_repair.analysis;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.uni_passau.data_race_repair.access.AccessType;
+import de.uni_passau.data_race_repair.access.Snapshot;
+
+import java.util.Set;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-
 public class BugDetail {
 
     private String bug_type;
@@ -27,6 +30,25 @@ public class BugDetail {
     public BugDetail() {
 
     }
+
+	public Snapshot toSnapshot() {
+    	final var accessType = qualifier.startsWith("Read/Write race.") ? AccessType.RD : AccessType.WR;
+
+        final String accessPathPreText;
+        if (accessType == AccessType.RD) {
+            accessPathPreText = "reads without synchronization from `";
+	    } else {
+            accessPathPreText = "writes to field `";
+	    }
+
+        final int accessPathStartLocation = qualifier.indexOf(accessPathPreText) + accessPathPreText.length();
+        final int accessPathLength = qualifier.substring(accessPathStartLocation).indexOf("`");
+
+        final String accessPath = qualifier.substring(accessPathStartLocation, accessPathStartLocation + accessPathLength);
+
+		return new Snapshot(accessPath, accessType, Set.of(), procedure);
+	}
+
     static class BugTrace {
 
         @JsonProperty("level")
