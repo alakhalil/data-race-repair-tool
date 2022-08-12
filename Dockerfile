@@ -1,8 +1,5 @@
 FROM ubuntu:latest
-MAINTAINER nehalmrashed@aol.com
-ENV DEBIAN_FRONTEND noninteractive
-ENV http_proxy 'http://mainproxy.ucm.conti.de:8980'
-ENV https_proxy 'https://mainproxy.ucm.conti.de:8980'
+
 RUN : \
     && apt-get -y update \
     && apt-get -y install git \
