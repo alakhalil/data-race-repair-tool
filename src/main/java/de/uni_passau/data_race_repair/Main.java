@@ -53,8 +53,7 @@ public class Main {
 		faultDetector.detectFaults().forEach((file, bugs) ->
 			bugsByFile.put(
 				file,
-				Arrays.asList(bugs)
-					.stream()
+				Arrays.stream(bugs)
 					.map(BugDetail::toSnapshot)
 					.collect(Collectors.toSet())
 			)
@@ -65,7 +64,7 @@ public class Main {
 
 
 	private static void repairClassFile(
-		final Map<File, Set<Fix>> fixesByFile,
+		final Map<String, Set<Fix>> fixesByFile,
 		final String analyzedSourcesDir,
 		final String outputDir
 	) {
@@ -83,18 +82,18 @@ public class Main {
 		final String analyzedSourcesDir,
 		final String outputDir
 	) {
-		final var fixesByFile = new HashMap<File, Set<Fix>>();
+		final var fixesByFile = new HashMap<String, Set<Fix>>();
 
 		for (final var file : bugsByFile.keySet()) {
 			final var bugs = bugsByFile.get(file);
 			
-			final Map<String, List<Snapshot>> bugsBy = bugs
+			final Map<String, List<Snapshot>> bugsByAccessPath = bugs
 				.stream()
 				.collect(Collectors.groupingBy(bug -> bug.accessPath));
 
-			final Set<Fix> fixes = null; //TODO: IMPLEMENT ALGORITHM
+			final Set<Fix> fixes = new HashSet<>(); // TODO: implement the algorithm
 
-			fixesByFile.put(file, fixes);
+			fixesByFile.put(file.getAbsolutePath(), fixes);
 		}
 
 		repairClassFile(fixesByFile, analyzedSourcesDir, outputDir);
