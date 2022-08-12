@@ -7,13 +7,13 @@ public class Snapshot {
 	public final String accessPath;
 	public final AccessType accessType;
 	public final Set<String> applicableLocks;
-	public final String trace;
+	public final Trace trace;
 
 	public Snapshot(
 		final String accessPath,
 		final AccessType accessType,
 		final Set<String> applicableLocks,
-		final String trace
+		final Trace trace
 	) {
 		this.accessPath = accessPath;
 		this.accessType = accessType;

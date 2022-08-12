@@ -86,12 +86,22 @@ public class Main {
 
 		for (final var file : bugsByFile.keySet()) {
 			final var bugs = bugsByFile.get(file);
-			
-			final Map<String, List<Snapshot>> bugsByAccessPath = bugs
+
+			final Map<String, List<Snapshot>> bugsBy = bugs
 				.stream()
 				.collect(Collectors.groupingBy(bug -> bug.accessPath));
 
-			final Set<Fix> fixes = new HashSet<>(); // TODO: implement the algorithm
+			final Set<Fix> fixes = new HashSet<>();
+
+			bugsBy.forEach((accessPath, snapshots) -> {
+				final var fix = new Fix();
+
+				for (final var snapshot : snapshots) {
+					fix.addTraceToLock(snapshot.trace);
+				}
+
+				fixes.add(fix);
+			});
 
 			fixesByFile.put(file.getAbsolutePath(), fixes);
 		}
