@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.uni_passau.data_race_repair.access.AccessType;
 import de.uni_passau.data_race_repair.access.Snapshot;
+import de.uni_passau.data_race_repair.access.Trace;
 
 import java.util.Set;
 
@@ -14,7 +15,7 @@ public class BugDetail {
     private String bug_type;
     private String qualifier;
     private String severity;
-    private String line;
+    private int line;
     private String column;
     private String procedure;
     private String procedure_start_line;
@@ -46,7 +47,7 @@ public class BugDetail {
 
         final String accessPath = qualifier.substring(accessPathStartLocation, accessPathStartLocation + accessPathLength);
 
-		return new Snapshot(accessPath, accessType, Set.of(), procedure);
+		return new Snapshot(accessPath, accessType, Set.of(), new Trace(procedure, line));
 	}
 
     static class BugTrace {
@@ -99,7 +100,7 @@ public class BugDetail {
         return severity;
     }
 
-    public String getLine() {
+    public int getLine() {
         return line;
     }
 
