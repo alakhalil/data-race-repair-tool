@@ -34,19 +34,17 @@ public class BugDetail {
 	public Snapshot toSnapshot() {
     	final var accessType = qualifier.startsWith("Read/Write race.") ? AccessType.RD : AccessType.WR;
 
-		final int accessPathStartLocation;
-		final int accessPathEndLocation;
-		final String accessPath;
-
-    	if (accessType == AccessType.RD) {
-		    accessPathStartLocation = qualifier.indexOf("reads without synchronization from `");
+        final String accessPathPreText;
+        if (accessType == AccessType.RD) {
+            accessPathPreText = "reads without synchronization from `";
 	    } else {
-		    accessPathStartLocation = qualifier.indexOf("writes to field `");
+            accessPathPreText = "writes to field `";
 	    }
 
-    	accessPathEndLocation = qualifier.substring(accessPathStartLocation).indexOf("`");
+        final int accessPathStartLocation = qualifier.indexOf(accessPathPreText) + accessPathPreText.length();
+        final int accessPathLength = qualifier.substring(accessPathStartLocation).indexOf("`");
 
-		accessPath = qualifier.substring(accessPathStartLocation, accessPathEndLocation);
+        final String accessPath = qualifier.substring(accessPathStartLocation, accessPathStartLocation + accessPathLength);
 
 		return new Snapshot(accessPath, accessType, Set.of(), procedure);
 	}

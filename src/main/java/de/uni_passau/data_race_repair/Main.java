@@ -9,9 +9,7 @@ import spoon.Launcher;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("SameParameterValue")
@@ -50,11 +48,10 @@ public class Main {
 		final var bugsByFile = new HashMap<File, Set<Snapshot>>();
 
 		final var faultDetector = new FaultDetector(sourceDir);
-		faultDetector.detectFaults();
-		faultDetector.readReports().forEach((file, bugs) ->
+		faultDetector.detectFaults().forEach((file, bugs) ->
 			bugsByFile.put(
 				file,
-				bugs
+				Arrays.asList(bugs)
 					.stream()
 					.map(BugDetail::toSnapshot)
 					.collect(Collectors.toSet())
@@ -68,6 +65,9 @@ public class Main {
 	private static void fixBugs(final Map<File, Set<Snapshot>> bugsByFile, String outputDir) {
 		for (final var file : bugsByFile.keySet()) {
 			final var bugs = bugsByFile.get(file);
+			bugs.forEach(bug -> {
+				System.out.println(file.getAbsolutePath() + ": " + bug);
+			});
 		}
 	}
 

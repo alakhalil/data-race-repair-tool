@@ -9,11 +9,10 @@ import java.util.*;
 
 public class FaultDetector {
 
-    private final String sourceFilesPath;
-    private File[] directories;
+    private final File sourceFilesDir;
 
     public FaultDetector(String sourceFilesPath) {
-        this.sourceFilesPath = sourceFilesPath;
+        this.sourceFilesDir = new File(sourceFilesPath);
     }
 
     /**
@@ -21,65 +20,79 @@ public class FaultDetector {
      *
      * @throws IOException
      */
-    public void detectFaults() throws IOException, URISyntaxException {
+    public Map<File, BugDetail[]> detectFaults() throws IOException, URISyntaxException {
+        final Map<File, BugDetail[]> faults = new HashMap<>();
 
-        this.getProgramsPaths();
-        assert directories != null;
-        if (directories.length != 0) {
-            System.out.println("############################# start fault localization with infer #############################");
-            String entriesFilePath = sourceFilesPath + "/entries.txt";
-            Map<String, String> entryPoints = readEntryPoints(entriesFilePath);
+        final var sources = getSourceFiles();
 
-            for (File program : directories) {
-                System.out.println("Currently processing program:" + program.getName());
+        if (sources.size() != 0) {
+            System.out.println("############################# Start fault localization with infer #############################");
 
-                String libDir = "./lib/*" ;
-                String outputDir =   "./out";
-                String classpath =  "./" + entryPoints.get(program.getName()) + ".java";
-                String srcPath =  "./" ;
+            for (File source : sources) {
+                System.out.println("Currently processing program: " + source.getName());
 
-                String cmd = "infer --racerd-only -o " +  outputDir + " -- javac -d " + outputDir + " -cp " + libDir + " -sourcepath " + srcPath + " " + classpath;
-                Process process = Runtime.getRuntime().exec(cmd, null,  new File(sourceFilesPath + "/" + program.getName()));
+                String libDir = "./resources/lib/infer-annotation-0.18.0.jar";
+                String buildDir = "./temp/build/";
+                String analysisDir = "./temp/analysis/";
+                String target = source.getAbsolutePath();
+                String srcPath = sourceFilesDir.getAbsolutePath();
+
+                String cmd = "infer --racerd-only -o " +  analysisDir + " -- javac -d " + buildDir + " -cp " + libDir + " -sourcepath " + srcPath + " " + target;
                 System.out.println(cmd);
+                Process process = Runtime.getRuntime().exec(cmd, null, null);
                 printResults(process);
+
+                faults.put(source, readBugReport(analysisDir));
             }
-        } else throw new IllegalArgumentException("ERROR: Directory is empty");
+        } else {
+            throw new IllegalArgumentException("ERROR: Directory is empty");
+        }
+
+        return faults;
     }
 
     /**
      * read reported bugs in json files into list of list bugDetail
      * @return
      */
-    public Map<File, List<BugDetail>> readReports() {
+    private BugDetail[] readBugReport(final String analysisDirPath) {
         try {
-        	final var bugDetails = new HashMap<File, List<BugDetail>>();
+            final var reportPath = analysisDirPath + "/report.json";
 
-        	final ObjectMapper mapper = new ObjectMapper();
-            for (File program : this.directories) {
-                String reportPath = sourceFilesPath + "/" + program.getName() + "/infer-out/report.json";
-                if (Paths.get(reportPath).toFile().isFile()) {
-	                bugDetails.put(program, Arrays.asList(mapper.readValue(Paths.get(reportPath).toFile(), BugDetail[].class)));
-                }
+            if (Paths.get(reportPath).toFile().isFile()) {
+                final var mapper = new ObjectMapper();
+                return mapper.readValue(Paths.get(reportPath).toFile(), BugDetail[].class);
             }
-
-            return bugDetails;
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return null;
+        
+        return new BugDetail[0];
     }
 
     /**
      * get paths to the programs located in the provided path @sourceFilesPath
      */
-    private void getProgramsPaths() {
-        this.directories = new File(sourceFilesPath).listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return file.isDirectory();
+    private Set<File> getSourceFiles() {
+        return findAllFilesWithin(sourceFilesDir);
+    }
+    
+    private Set<File> findAllFilesWithin(File dir) {
+        final var fileTree = new HashSet<File>();
+        
+        if (dir == null || dir.listFiles() == null) {
+            return fileTree;
+        }
+        
+        for (final File entry : dir.listFiles()) {
+            if (entry.isFile()) {
+                fileTree.add(entry);
+            } else {
+                fileTree.addAll(findAllFilesWithin(entry));
             }
-        });
+        }
+        
+        return fileTree;
     }
 
     /**
