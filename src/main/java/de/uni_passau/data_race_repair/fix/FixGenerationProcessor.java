@@ -12,32 +12,40 @@ import java.util.*;
  */
 public class FixGenerationProcessor extends AbstractProcessor<CtClass<?>> {
 
-	public final Map<File, Set<Fix>> fixesByFile;
+	private final Map<String, Set<Fix>> fixesByFile;
 
 	/**
 	 * @param fixesByFile Fixes to apply per each file
 	 */
-	public FixGenerationProcessor(final Map<File, Set<Fix>> fixesByFile) {
+	public FixGenerationProcessor(
+		final Map<String, Set<Fix>> fixesByFile
+	) {
 		this.fixesByFile = fixesByFile;
 	}
 
 	/**
-     * {@inheritDoc}
-     * @param element the candidate
-     * @return <code>true</code> if the candidate is to be processed by the {@link #process(CtClass)}
-     */
-    @Override
-    public boolean isToBeProcessed(final CtClass<?> element) {
-    	return true;
-    }
+	 * {@inheritDoc}
+	 * @param element the element that is currently being scanned
+	 */
+	@Override
+	public void process(final CtClass<?> element) {
+		final var file = element.getPosition().getCompilationUnit().getFile().getAbsolutePath();
+		final var fixes = fixesByFile.get(file);
 
-    /**
-     * {@inheritDoc}
-     * @param element the element that is currently being scanned
-     */
-    @Override
-    public void process(final CtClass<?> element) {
-	    
-    }
+		if (fixes != null) {
+			var nextLockId = 0;
+			for (final var fix : fixes) {
+				final var lockId = nextLockId++;
+				final var methodsToLock = fix.getMethodsToLock();
+
+				System.out.println("Using lock" + lockId + " to lock methods:");
+				methodsToLock.forEach(method -> {
+					System.out.println("\t" + method);
+				});
+			}
+		}
+
+		element.getMethods();
+	}
 
 }

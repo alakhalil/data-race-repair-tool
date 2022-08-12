@@ -1,15 +1,18 @@
 package de.uni_passau.data_race_repair.fix;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Fix {
 
-	public final String placeholder;
+	private final Set<String> methodsToLock = new HashSet<>();
 
-	public Fix(
-		final String placeholder
-	) {
-		this.placeholder = placeholder;
+	public void addMethodToLock(String methodTrace) {
+		methodsToLock.add(methodTrace);
 	}
-    
+
+	public Set<String> getMethodsToLock() {
+		return new HashSet<>(methodsToLock);
+	}
+
 }
