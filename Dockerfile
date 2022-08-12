@@ -28,6 +28,7 @@ ENV PATH $PATH:/gradle-6.3/bin
 
 #compile and run app
 RUN ./gradlew build --stacktrace 
+RUN ./gradlew run --args='./out ./in'
 
 #install and run infer
 RUN mkdir infer && cd infer
