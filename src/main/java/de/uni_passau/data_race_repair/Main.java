@@ -37,7 +37,6 @@ public class Main {
 			final var sourceDir = args[0];
 			//final var outputDir = args[1];
 
-
 			// TODO: remaining processing + remove 'temp' dir
 
 			// concurrency bugs - fault localization
