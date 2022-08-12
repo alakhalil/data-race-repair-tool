@@ -1,8 +1,6 @@
 FROM ubuntu:latest
 
 RUN apt-get -y update
-RUN apt-get install -y git
-RUN git clone https://github.com/alakhalil/data-race-repair-tool.git
 
 #install gradle
 RUN apt-get install -y wget
@@ -29,7 +27,6 @@ ENV GRADLE_HOME /gradle-6.3
 ENV PATH $PATH:/gradle-6.3/bin
 
 #compile and run app
-WORKDIR data-race-repair-tool
 RUN ./gradlew build --stacktrace 
 
 #install and run infer
