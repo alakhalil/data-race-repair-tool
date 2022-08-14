@@ -1,4 +1,4 @@
-package de.uni_passau.data_race_repair;
+package de.uni_passau.data_race_repair.analysis;
 
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.declaration.CtAnnotation;
@@ -37,17 +37,17 @@ public class AnnotationAdderProcessor extends AbstractProcessor<CtClass<?>> {
 
     /**
      * {@inheritDoc}
-     * @param element the element that is currently being scanned
+     * @param clazz the class that is currently being scanned
      */
     @Override
-    public void process(final CtClass<?> element) {
+    public void process(final CtClass<?> clazz) {
 	    final CtTypeReference<Annotation> threadSafeTypeReference = getFactory().Core().createTypeReference();
 	    threadSafeTypeReference.setSimpleName(annotationQualifiedName);
 
 	    final CtAnnotation<?> threadSafeAnnotation = getFactory().Core().createAnnotation();
 	    threadSafeAnnotation.setAnnotationType(threadSafeTypeReference);
 
-    	element.addAnnotation(threadSafeAnnotation);
+	    clazz.addAnnotation(threadSafeAnnotation);
     }
 
 }
