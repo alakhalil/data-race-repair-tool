@@ -1,0 +1,13 @@
+version: '2.4'
+
+services:
+  fixer:
+    build: .
+    command: >
+      sh -c "cd project/ &&
+      ./gradlew build --stacktrace &&
+      ./gradlew run --args='/in /out'"
+    volumes:
+      - ./project:/project
+      - ./in:/in
+      - ./out:/out
