@@ -27,14 +27,9 @@ RUN : \
         ln -s "/opt/infer-linux64-v$VERSION/bin/infer" /usr/local/bin/infer
         
 RUN : \
-    &&  git clone https://github.com/alakhalil/data-race-repair-tool.git \
     && apt-get install -y wget \
     && wget -c https://services.gradle.org/distributions/gradle-7.4.2-bin.zip -P /tmp \
     && unzip -d /opt/gradle /tmp/gradle-7.4.2-bin.zip \
     && export GRADLE_HOME=/opt/gradle/gradle-7.4.2 \
     && export PATH=${GRADLE_HOME}/bin:${PATH}
 
-RUN : \
-    && cd data-race-repair-tool/  \
-    && ./gradlew build --stacktrace  \
-    && ./gradlew run --args='./out ./in'

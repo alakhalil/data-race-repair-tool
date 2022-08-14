@@ -1,17 +1,21 @@
 # data-race-repair-tool
 
 
-## Build the tool
+## Requirements
 
- `./gradlew build`
+The project requires `docker` and `docker-compose`, as well as an `sh` command, which can be executed from the command-line within the docker container.
 
 
-## Run the tool
+## Installation
 
-`./gradlew run --args='path1 path2'`
+`sudo docker-compose build`
 
-- path1 is the path to the benchmark, each project should be located within a folder with the pcakage name.
 
-- In the provided path, file entries.txt is need to know the entry point to each project. 
+## Running the tool
 
+Put input data in the `./in` directory. It must contain `.java` files to be processed (in the correct data-structure java expects).
+A `@ThreadSafe` annotation will be added to every file in the project, in order to test it, and datarace bugs found by RacerD will be fixed.
+The fixed files will be put in the `./out` directory.
+
+Run the command using: `sudo docker-compose run fixer`
 
